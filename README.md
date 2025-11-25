@@ -1,5 +1,4 @@
-# Echo-Hunter (原 Cognitive Genome)
-
+# Echo-Hunter 
 一个由 AI 驱动的认知基因组分析工具，用于捕捉、分析和可视化你的思维碎片。
 
 ## 🎯 项目简介
