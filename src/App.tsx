@@ -9,7 +9,7 @@ import ShareModal from './components/ShareModal';
 import SystemStatus from './components/SystemStatus';
 import type { ThoughtNode, Language, AIConfig, AIProvider } from './types';
 import { DEFAULT_AI_CONFIG, PROVIDER_MODELS } from './types';
-import { Activity, Wind, Dna, Settings, Globe, X, Download, HelpCircle, ChevronDown, Save, CheckCircle2, Circle, Plus, Trash2, Share2, LayoutGrid, List } from 'lucide-react';
+import { Activity, Wind, Dna, Settings, Globe, X, Download, HelpCircle, ChevronDown, Save, CheckCircle2, Circle, Plus, Trash2, Share2, LayoutGrid, List, Github, ExternalLink } from 'lucide-react';
 
 const PROVIDER_PRESETS: Record<AIProvider, Partial<AIConfig>> = {
   gemini: { baseUrl: 'https://generativelanguage.googleapis.com', model: 'gemini-2.5-flash' },
@@ -434,13 +434,39 @@ const App: React.FC = () => {
 
               <div>
                   <label className="block text-xs font-mono text-slate-500 mb-2 uppercase">{t.dataMgmt}</label>
-                  <button 
+                  <button
                     onClick={exportData}
                     className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded text-sm text-slate-300 transition-colors"
                   >
                     <Download size={16} />
                     {t.export}
                   </button>
+              </div>
+
+              <div className="h-px bg-slate-800 w-full" />
+
+              <div>
+                  <label className="block text-xs font-mono text-slate-500 mb-2 uppercase">PROJECT</label>
+                  <div className="space-y-2">
+                    <a
+                      href="https://github.com/xiao-qinfeng/Echo-Hunter"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded text-sm text-slate-300 transition-colors"
+                    >
+                      <Github size={16} />
+                      <span>GitHub Repository</span>
+                    </a>
+                    <a
+                      href="https://github.com/xiao-qinfeng"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded text-sm text-slate-300 transition-colors"
+                    >
+                      <ExternalLink size={16} />
+                      <span>Author Profile</span>
+                    </a>
+                  </div>
               </div>
             </div>
 

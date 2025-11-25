@@ -2,7 +2,7 @@
 import React from 'react';
 import { CognitiveMode } from '../types';
 import type { ThoughtNode, Language } from '../types';
-import { X, Activity, Fingerprint, Brain, Database, Cpu, User } from 'lucide-react';
+import { X, Activity, Fingerprint, Brain, Database, Cpu, User, Github, ExternalLink } from 'lucide-react';
 
 interface SystemStatusProps {
   isOpen: boolean;
@@ -164,9 +164,33 @@ const SystemStatus: React.FC<SystemStatusProps> = ({ isOpen, onClose, thoughts, 
         </div>
         
         {/* Footer */}
-        <div className="p-4 bg-slate-950 border-t border-slate-800 flex justify-between items-center text-[10px] font-mono text-slate-600">
+        <div className="p-4 bg-slate-950 border-t border-slate-800">
+          <div className="flex justify-between items-center text-[10px] font-mono text-slate-600 mb-2">
             <div>ID: {Math.random().toString(36).substr(2, 9).toUpperCase()}</div>
             <div>STATUS: ONLINE</div>
+          </div>
+          <div className="flex gap-3 justify-center">
+            <a
+              href="https://github.com/xiao-qinfeng/Echo-Hunter"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1 px-2 py-1 rounded border border-slate-700 hover:border-cyan-500 text-slate-500 hover:text-cyan-400 transition-colors"
+              title="GitHub Repository"
+            >
+              <Github size={10} />
+              <span>GitHub</span>
+            </a>
+            <a
+              href="https://github.com/xiao-qinfeng"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1 px-2 py-1 rounded border border-slate-700 hover:border-cyan-500 text-slate-500 hover:text-cyan-400 transition-colors"
+              title="Personal Profile"
+            >
+              <ExternalLink size={10} />
+              <span>Profile</span>
+            </a>
+          </div>
         </div>
 
       </div>
