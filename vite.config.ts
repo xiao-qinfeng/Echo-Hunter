@@ -17,18 +17,26 @@ export default defineConfig({
         background_color: '#0f172a',
         display: 'standalone',
         orientation: 'portrait',
+        start_url: '/',
+        scope: '/',
+        display_override: ['window-controls-overlay'],
         icons: [
           {
             src: 'pwa-icon-192.png',
             sizes: '192x192',
-            type: 'image/png'
+            type: 'image/png',
+            purpose: 'any maskable'
           },
           {
             src: 'pwa-icon-512.png',
             sizes: '512x512',
-            type: 'image/png'
+            type: 'image/png',
+            purpose: 'any maskable'
           }
-        ]
+        ],
+        categories: ['productivity', 'education'],
+        lang: 'en',
+        dir: 'ltr'
       },
       workbox: {
         // Cache App Shell
