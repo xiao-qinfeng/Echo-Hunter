@@ -182,11 +182,57 @@ const App: React.FC = () => {
 
   const toggleLang = () => setLang(prev => prev === 'en' ? 'zh' : 'en');
 
+  const [exportFormat, setExportFormat] = useState<'json' | 'csv'>('json');
+
   const exportData = () => {
+    if (exportFormat === 'csv') {
+      exportCSV();
+    } else {
+      exportJSON();
+    }
+  };
+
+  const exportJSON = () => {
     const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(thoughts, null, 2));
     const downloadAnchorNode = document.createElement('a');
     downloadAnchorNode.setAttribute("href", dataStr);
     downloadAnchorNode.setAttribute("download", `cognitive_genome_${new Date().toISOString().slice(0,10)}.json`);
+    document.body.appendChild(downloadAnchorNode);
+    downloadAnchorNode.click();
+    downloadAnchorNode.remove();
+  };
+
+  const exportCSV = () => {
+    const modeLabels = {
+      [CognitiveMode.OBSERVATION]: 'OBSERVATION',
+      [CognitiveMode.PARADOX]: 'PARADOX',
+      [CognitiveMode.SENSORY]: 'SENSORY'
+    };
+
+    // CSV headers
+    const headers = ['ID', 'Content', 'Timestamp', 'Mode', 'Depth Score', 'Style Uniqueness', 'Distortion Type', 'Metaphor Detected', 'AI Feedback'];
+
+    // CSV rows
+    const rows = thoughts.map(node => [
+      node.id,
+      `"${node.content.replace(/"/g, '""')}"`,
+      new Date(node.timestamp).toISOString(),
+      modeLabels[node.mode] || node.mode,
+      node.analysis.depthScore.toString(),
+      node.analysis.styleUniqueness.toString(),
+      `"${node.analysis.distortionType.replace(/"/g, '""')}"`,
+      node.analysis.metaphorDetected ? 'Yes' : 'No',
+      `"${node.analysis.feedback.replace(/"/g, '""')}"`
+    ]);
+
+    // Combine headers and rows
+    const csvContent = [headers.join(','), ...rows.map(row => row.join(','))].join('\n');
+
+    // Download CSV
+    const dataStr = "data:text/csv;charset=utf-8," + encodeURIComponent(csvContent);
+    const downloadAnchorNode = document.createElement('a');
+    downloadAnchorNode.setAttribute("href", dataStr);
+    downloadAnchorNode.setAttribute("download", `cognitive_genome_${new Date().toISOString().slice(0,10)}.csv`);
     document.body.appendChild(downloadAnchorNode);
     downloadAnchorNode.click();
     downloadAnchorNode.remove();
@@ -211,7 +257,7 @@ const App: React.FC = () => {
     baseUrl: lang === 'en' ? 'API Address (Base URL)' : 'API 接口地址',
     model: lang === 'en' ? 'Model Selection' : '模型选择',
     addModel: lang === 'en' ? 'Add custom model' : '添加自定义模型',
-    export: lang === 'en' ? 'Export Data (JSON)' : '导出数据 (JSON)',
+    export: lang === 'en' ? 'Export Data' : '导出数据',
     dataMgmt: lang === 'en' ? 'Data Management' : '数据管理',
     autoSaved: lang === 'en' ? 'Auto-saved' : '自动保存',
     uiPrefs: lang === 'en' ? 'Interface Preferences' : '界面偏好',
@@ -435,13 +481,23 @@ const App: React.FC = () => {
 
               <div>
                   <label className="block text-xs font-mono text-slate-500 mb-2 uppercase">{t.dataMgmt}</label>
-                  <button
-                    onClick={exportData}
-                    className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded text-sm text-slate-300 transition-colors"
-                  >
-                    <Download size={16} />
-                    {t.export}
-                  </button>
+                  <div className="flex gap-2">
+                    <select
+                      value={exportFormat}
+                      onChange={(e) => setExportFormat(e.target.value as 'json' | 'csv')}
+                      className="flex-1 bg-slate-800 border border-slate-700 rounded px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-violet-500 font-mono appearance-none cursor-pointer"
+                    >
+                      <option value="json">JSON</option>
+                      <option value="csv">CSV</option>
+                    </select>
+                    <button
+                      onClick={exportData}
+                      className="flex items-center justify-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded text-sm text-slate-300 transition-colors"
+                    >
+                      <Download size={16} />
+                      {t.export}
+                    </button>
+                  </div>
               </div>
 
               <div className="h-px bg-slate-800 w-full" />

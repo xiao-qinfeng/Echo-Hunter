@@ -197,7 +197,7 @@ PWA 使用以下缓存策略确保最佳性能：
 
 由于思维数据存储在 localStorage：
 
-1. **定期导出**：建议定期导出 JSON 备份（Settings > Export Data）
+1. **定期导出**：建议定期导出备份（Settings > Export Data），支持 JSON 或 CSV 格式
 2. **多端同步**：在不同设备使用时，需要手动导出/导入数据
 3. **清理缓存**：如需清理浏览器数据，请先导出备份
 4. **PWA 与浏览器**：PWA 和浏览器标签页共享同一 localStorage 数据
@@ -211,7 +211,7 @@ PWA 使用以下缓存策略确保最佳性能：
 ## 🌟 使用技巧
 
 1. **添加自定义模型**：在 Settings 中输入模型名称并点击 + 号
-2. **导出思维数据**：点击 Settings 中的 Export Data
+2. **导出思维数据**：点击 Settings 中的 Export Data，可选择 JSON 或 CSV 格式
 3. **切换视图模式**：使用顶部的 Topography/Archive 切换按钮
 4. **查看系统状态**：点击左上角的 DNA 图标
 5. **全屏神经花园**：点击 NeuroGarden 右上角的 fullscreen 图标
