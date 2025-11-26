@@ -4,11 +4,17 @@ import { VitePWA } from 'vite-plugin-pwa'
 
 // https://vite.dev/config/
 export default defineConfig({
+  publicDir: 'public', // Ensure Vercel serves public directory files
   plugins: [
     react(),
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg', 'pwa-icon-192.png', 'pwa-icon-512.png'],
+      workbox: {
+        // Ensure PWA icons are included in service worker cache
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}', 'pwa-icon-*.png'],
+        globIgnores: [], // Don't ignore any files
+      },
       manifest: {
         name: 'Echo Hunter',
         short_name: 'Echo',
