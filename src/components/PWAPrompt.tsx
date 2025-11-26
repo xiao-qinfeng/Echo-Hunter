@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Download, X } from 'lucide-react';
+import { Download, X, HelpCircle } from 'lucide-react';
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
@@ -23,6 +23,9 @@ const PWAPrompt: React.FC<PWAPromptProps> = ({ lang, onDismiss }) => {
       : '将认知基因组添加到主屏幕以获得最佳体验',
     installButton: lang === 'en' ? 'Install' : '安装',
     maybeLater: lang === 'en' ? 'Maybe Later' : '稍后再说',
+    iosInstruction: lang === 'en'
+      ? 'Tap the share button below and select "Add to Home Screen"'
+      : '点击下方分享按钮并选择"添加到主屏幕"',
   };
 
   useEffect(() => {
@@ -32,24 +35,15 @@ const PWAPrompt: React.FC<PWAPromptProps> = ({ lang, onDismiss }) => {
       return;
     }
 
-    // Check if previously dismissed (don't show for 7 days)
-    const lastDismissed = localStorage.getItem('pwa_prompt_dismissed');
-    if (lastDismissed) {
-      const daysSinceDismissed = (Date.now() - parseInt(lastDismissed)) / (1000 * 60 * 60 * 24);
-      if (daysSinceDismissed < 7) {
-        return;
-      }
-    }
+    // Show prompt after a short delay (don't be too aggressive)
+    const timer = setTimeout(() => {
+      setShowPrompt(true);
+    }, 3000);
 
-    // Listen for beforeinstallprompt event
+    // Listen for beforeinstallprompt event (for browsers that support it)
     const handleBeforeInstallPrompt = (e: Event) => {
       e.preventDefault();
       setDeferredPrompt(e as BeforeInstallPromptEvent);
-
-      // Show prompt after a short delay (don't be too aggressive)
-      setTimeout(() => {
-        setShowPrompt(true);
-      }, 2000);
     };
 
     // Listen for appinstalled event
@@ -63,13 +57,17 @@ const PWAPrompt: React.FC<PWAPromptProps> = ({ lang, onDismiss }) => {
     window.addEventListener('appinstalled', handleAppInstalled);
 
     return () => {
+      clearTimeout(timer);
       window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
       window.removeEventListener('appinstalled', handleAppInstalled);
     };
   }, []);
 
   const handleInstall = async () => {
-    if (!deferredPrompt) return;
+    if (!deferredPrompt) {
+      // Show manual instructions if beforeinstallprompt is not supported
+      return;
+    }
 
     try {
       await deferredPrompt.prompt();
@@ -98,6 +96,9 @@ const PWAPrompt: React.FC<PWAPromptProps> = ({ lang, onDismiss }) => {
     return null;
   }
 
+  // Detect iOS Safari (which doesn't support beforeinstallprompt)
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
+
   return (
     <div className="fixed bottom-0 left-0 right-0 z-[250] p-4 md:left-auto md:right-6 md:bottom-6 md:w-auto">
       <div className="mx-auto max-w-md bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl shadow-black/50 backdrop-blur-xl p-5 animate-in slide-in-from-bottom duration-300 md:max-w-sm">
@@ -124,17 +125,28 @@ const PWAPrompt: React.FC<PWAPromptProps> = ({ lang, onDismiss }) => {
           {t.description}
         </p>
 
+        {isIOS && (
+          <div className="flex items-start gap-2 p-3 bg-slate-800/50 rounded-lg mb-4">
+            <HelpCircle size={16} className="text-violet-400 mt-0.5" />
+            <p className="text-xs text-slate-400">
+              {t.iosInstruction}
+            </p>
+          </div>
+        )}
+
         <div className="flex gap-3">
-          <button
-            onClick={handleInstall}
-            className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-violet-600 hover:bg-violet-500 text-white rounded-xl font-medium transition-all duration-200 hover:scale-[1.02] shadow-lg shadow-violet-600/30"
-          >
-            <Download size={18} />
-            {t.installButton}
-          </button>
+          {!isIOS && (
+            <button
+              onClick={handleInstall}
+              className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-violet-600 hover:bg-violet-500 text-white rounded-xl font-medium transition-all duration-200 hover:scale-[1.02] shadow-lg shadow-violet-600/30"
+            >
+              <Download size={18} />
+              {t.installButton}
+            </button>
+          )}
           <button
             onClick={handleDismiss}
-            className="px-4 py-3 text-slate-400 hover:text-slate-200 rounded-xl transition-colors font-medium"
+            className={`px-4 py-3 text-slate-400 hover:text-slate-200 rounded-xl transition-colors font-medium ${isIOS ? 'flex-1' : ''}`}
           >
             {t.maybeLater}
           </button>

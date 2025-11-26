@@ -659,6 +659,19 @@ const App: React.FC = () => {
       {/* PWA Install Prompt */}
       <PWAPrompt lang={lang} />
 
+      {/* Debug: Show install button always for testing */}
+      {process.env.NODE_ENV === 'development' && (
+        <button
+          onClick={() => {
+            const event = new Event('beforeinstallprompt');
+            window.dispatchEvent(event);
+          }}
+          className="fixed bottom-4 left-4 z-[300] bg-violet-600 text-white px-4 py-2 rounded-lg"
+        >
+          Test PWA Prompt
+        </button>
+      )}
+
     </div>
   );
 };
