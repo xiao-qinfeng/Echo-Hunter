@@ -33,25 +33,69 @@ const PWAPrompt: React.FC<PWAPromptProps> = ({ lang, onDismiss }) => {
   };
 
   useEffect(() => {
+    // Log PWA debugging info
+    console.log('[PWA Debug] Initializing PWA prompt...');
+    console.log('[PWA Debug] display-mode:', window.matchMedia('(display-mode: standalone)').matches ? 'standalone' : 'browser');
+    console.log('[PWA Debug] navigator.standalone:', (window.navigator as any).standalone);
+    console.log('[PWA Debug] serviceWorker in navigator:', 'serviceWorker' in navigator);
+    console.log('[PWA Debug] HTTPS or localhost:', window.location.protocol === 'https:' || window.location.hostname === 'localhost');
+
     // Check if already installed (or in standalone mode)
     if (window.matchMedia('(display-mode: standalone)').matches || (window.navigator as any).standalone) {
+      console.log('[PWA Debug] App already installed, hiding prompt');
       setIsInstalled(true);
       return;
     }
 
+    // Check if PWA is supported
+    const isSecureContext = window.isSecureContext;
+    const hasServiceWorker = 'serviceWorker' in navigator;
+    const hasManifest = document.querySelector('link[rel="manifest"]') !== null;
+
+    console.log('[PWA Debug] isSecureContext:', isSecureContext);
+    console.log('[PWA Debug] hasServiceWorker:', hasServiceWorker);
+    console.log('[PWA Debug] hasManifest:', hasManifest);
+
+    if (!isSecureContext) {
+      console.log('[PWA Debug] Not in secure context, PWA not supported');
+      return;
+    }
+
+    if (!hasServiceWorker) {
+      console.log('[PWA Debug] Service Worker not supported');
+    }
+
+    if (!hasManifest) {
+      console.log('[PWA Debug] Manifest not found');
+    }
+
+    // Check if previously dismissed (don't show for 7 days)
+    const lastDismissed = localStorage.getItem('pwa_prompt_dismissed');
+    if (lastDismissed) {
+      const daysSinceDismissed = (Date.now() - parseInt(lastDismissed)) / (1000 * 60 * 60 * 24);
+      console.log('[PWA Debug] Days since dismissed:', daysSinceDismissed);
+      if (daysSinceDismissed < 7) {
+        console.log('[PWA Debug] Prompt dismissed recently, not showing');
+        return;
+      }
+    }
+
     // Show prompt after a short delay (don't be too aggressive)
     const timer = setTimeout(() => {
+      console.log('[PWA Debug] Showing PWA prompt');
       setShowPrompt(true);
     }, 3000);
 
     // Listen for beforeinstallprompt event (for browsers that support it)
     const handleBeforeInstallPrompt = (e: Event) => {
+      console.log('[PWA Debug] beforeinstallprompt event fired');
       e.preventDefault();
       setDeferredPrompt(e as BeforeInstallPromptEvent);
     };
 
     // Listen for appinstalled event
     const handleAppInstalled = () => {
+      console.log('[PWA Debug] App installed successfully');
       setIsInstalled(true);
       setShowPrompt(false);
       localStorage.setItem('pwa_installed', 'true');
@@ -59,6 +103,16 @@ const PWAPrompt: React.FC<PWAPromptProps> = ({ lang, onDismiss }) => {
 
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
     window.addEventListener('appinstalled', handleAppInstalled);
+
+    // Check if service worker is registered
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistration().then(registration => {
+        console.log('[PWA Debug] Service Worker registration:', registration);
+        if (!registration) {
+          console.log('[PWA Debug] Service Worker not registered, attempting to register...');
+        }
+      });
+    }
 
     return () => {
       clearTimeout(timer);
@@ -68,23 +122,30 @@ const PWAPrompt: React.FC<PWAPromptProps> = ({ lang, onDismiss }) => {
   }, []);
 
   const handleInstall = async () => {
+    console.log('[PWA Debug] Install button clicked');
+    console.log('[PWA Debug] deferredPrompt:', deferredPrompt);
+
     if (!deferredPrompt) {
+      console.log('[PWA Debug] No deferredPrompt, checking browser support...');
       // Show manual instructions if beforeinstallprompt is not supported
       setShowManualInstructions(true);
       return;
     }
 
     try {
+      console.log('[PWA Debug] Calling deferredPrompt.prompt()...');
       await deferredPrompt.prompt();
+      console.log('[PWA Debug] Prompt shown successfully');
       const choiceResult = await deferredPrompt.userChoice;
+      console.log('[PWA Debug] User choice:', choiceResult.outcome);
 
       if (choiceResult.outcome === 'accepted') {
-        console.log('User accepted the install prompt');
+        console.log('[PWA Debug] User accepted the install prompt');
       } else {
-        console.log('User dismissed the install prompt');
+        console.log('[PWA Debug] User dismissed the install prompt');
       }
     } catch (error) {
-      console.error('Error prompting install:', error);
+      console.error('[PWA Debug] Error prompting install:', error);
       setShowManualInstructions(true);
     } finally {
       setDeferredPrompt(null);
