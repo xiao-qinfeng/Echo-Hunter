@@ -9,7 +9,7 @@ import ShareModal from './components/ShareModal';
 import SystemStatus from './components/SystemStatus';
 import PWAPrompt from './components/PWAPrompt';
 import type { ThoughtNode, Language, AIConfig, AIProvider } from './types';
-import { DEFAULT_AI_CONFIG, PROVIDER_MODELS } from './types';
+import { DEFAULT_AI_CONFIG, PROVIDER_MODELS, CognitiveMode } from './types';
 import { Activity, Wind, Dna, Settings, Globe, X, Download, HelpCircle, ChevronDown, Save, CheckCircle2, Circle, Plus, Trash2, Share2, LayoutGrid, List, Github, ExternalLink } from 'lucide-react';
 
 const PROVIDER_PRESETS: Record<AIProvider, Partial<AIConfig>> = {
