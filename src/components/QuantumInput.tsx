@@ -44,6 +44,12 @@ const QuantumInput: React.FC<QuantumInputProps> = ({ onCapture, lang, aiConfig, 
     "寻找日常中的异常。"
   ];
 
+  // Token estimation for progress indicator
+  const estimateTokens = (text: string): number => {
+    // Rough estimation: 1 token ≈ 0.75 words or 4 characters
+    return Math.ceil(text.length / 4) + 300; // +300 for system prompt
+  };
+
   useEffect(() => {
     // Cycle through probes every 5 seconds
     const interval = setInterval(() => {
@@ -72,32 +78,42 @@ const QuantumInput: React.FC<QuantumInputProps> = ({ onCapture, lang, aiConfig, 
     setIsAnalyzing(true);
     setDetectedMode(null); // Reset
 
-    // AI determines the mode now
-    const analysis = await analyzeThought(input, aiConfig, lang);
+    // Track start time for performance monitoring
+    const startTime = Date.now();
+    const estimatedTokens = estimateTokens(input);
 
-    // Set detected mode to trigger animation
-    setDetectedMode(analysis.cognitiveType);
+    try {
+      // AI determines the mode now
+      const analysis = await analyzeThought(input, aiConfig, lang);
+      const duration = Math.round((Date.now() - startTime) / 100) / 10; // seconds with 1 decimal place
 
-    const newNode: ThoughtNode = {
-      id: crypto.randomUUID(),
-      content: input,
-      timestamp: Date.now(),
-      mode: analysis.cognitiveType,
-      analysis: analysis
-    };
+      console.log(`[AI Performance] Analysis completed in ${duration}s for ${estimatedTokens} estimated tokens`);
 
-    onCapture(newNode);
-    setInput('');
-    setIsAnalyzing(false);
-    setIsExpanded(false);
+      // Set detected mode to trigger animation
+      setDetectedMode(analysis.cognitiveType);
 
-    // Clear the flash after a bit
-    setTimeout(() => setDetectedMode(null), 2000);
+      const newNode: ThoughtNode = {
+        id: crypto.randomUUID(),
+        content: input,
+        timestamp: Date.now(),
+        mode: analysis.cognitiveType,
+        analysis: analysis
+      };
+
+      onCapture(newNode);
+      setInput('');
+      setIsExpanded(false);
+
+      // Clear the flash after a bit
+      setTimeout(() => setDetectedMode(null), 2000);
+    } finally {
+      setIsAnalyzing(false);
+    }
   };
 
   // Dynamic Styles based on detected mode
   const getBorderColor = () => {
-    if (isAnalyzing && !detectedMode) return "border-slate-600";
+    if (isAnalyzing && !detectedMode) return "border-violet-400/50";
     switch(detectedMode) {
       case CognitiveMode.OBSERVATION: return "border-cyan-500 shadow-[0_0_30px_rgba(34,211,238,0.3)]";
       case CognitiveMode.PARADOX: return "border-violet-500 shadow-[0_0_30px_rgba(167,139,250,0.3)]";
@@ -118,8 +134,9 @@ const QuantumInput: React.FC<QuantumInputProps> = ({ onCapture, lang, aiConfig, 
              </div>
         )}
         {isAnalyzing && (
-            <div className="text-xs font-mono text-violet-400 tracking-widest animate-pulse">
-                {t.analyzing}
+            <div className="flex items-center gap-2 text-xs font-mono text-violet-400 tracking-widest animate-pulse">
+                <Loader2 size={12} className="animate-spin" />
+                <span>{t.analyzing}</span>
             </div>
         )}
       </div>
