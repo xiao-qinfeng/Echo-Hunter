@@ -71,11 +71,10 @@ const QuantumInput: React.FC<QuantumInputProps> = ({ onCapture, lang, aiConfig, 
 
     setIsAnalyzing(true);
     setDetectedMode(null); // Reset
-    const start = Date.now();
-    
+
     // AI determines the mode now
     const analysis = await analyzeThought(input, aiConfig, lang);
-    
+
     // Set detected mode to trigger animation
     setDetectedMode(analysis.cognitiveType);
 
@@ -87,15 +86,11 @@ const QuantumInput: React.FC<QuantumInputProps> = ({ onCapture, lang, aiConfig, 
       analysis: analysis
     };
 
-    // Artificial delay to let user see the color flash
-    const elapsed = Date.now() - start;
-    if (elapsed < 1200) await new Promise(r => setTimeout(r, 1200 - elapsed));
-
     onCapture(newNode);
     setInput('');
     setIsAnalyzing(false);
     setIsExpanded(false);
-    
+
     // Clear the flash after a bit
     setTimeout(() => setDetectedMode(null), 2000);
   };

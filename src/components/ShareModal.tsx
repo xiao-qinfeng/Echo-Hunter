@@ -97,12 +97,16 @@ const ShareModal: React.FC<ShareModalProps> = ({ node, onClose, lang, userName }
       <div className="relative w-full max-w-md flex flex-col items-center">
         
         {/* Controls */}
-        <div className="w-full flex justify-between items-center mb-4 text-slate-400">
+        <div className="w-full flex justify-between items-center mb-4 text-slate-400 relative">
             <h3 className="font-mono text-sm uppercase tracking-widest flex items-center gap-2">
                 <Share2 size={16} /> {t.title}
             </h3>
-            <button onClick={onClose} className="hover:text-white transition-colors">
-                <X size={24} />
+            <button
+                onClick={onClose}
+                className="hover:text-white transition-colors w-10 h-10 flex items-center justify-center rounded-full hover:bg-slate-800/50 md:w-8 md:h-8 md:hover:bg-transparent"
+                aria-label="Close"
+            >
+                <X size={24} className="md:size-5" />
             </button>
         </div>
 
