@@ -31,7 +31,13 @@ const NeuroGarden: React.FC<NeuroGardenProps> = ({ nodes, lang, onShare }) => {
 
     const width = wrapperRef.current.clientWidth;
     const height = 500;
-    
+
+    // 修复：确保容器有有效尺寸
+    if (width <= 0 || height <= 0) {
+      console.warn('NeuroGarden: 容器尺寸无效', { width, height });
+      return;
+    }
+
     // Clear previous
     d3.select(svgRef.current).selectAll("*").remove();
 
