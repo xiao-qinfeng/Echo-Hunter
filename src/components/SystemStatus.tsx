@@ -18,7 +18,7 @@ const SystemStatus: React.FC<SystemStatusProps> = ({ isOpen, onClose, thoughts, 
 
   const t = {
     title: lang === 'en' ? 'SYSTEM IDENTITY' : '系统身份',
-    subtitle: lang === 'en' ? 'Cognitive Genome Sequence' : '认知基因序列',
+    subtitle: lang === 'en' ? 'Echo Hunter Sequence' : '回声猎人序列',
     pilot: lang === 'en' ? 'PILOT ALIAS' : '驾驶员代号',
     total: lang === 'en' ? 'TOTAL FRAGMENTS' : '思维碎片总数',
     dominant: lang === 'en' ? 'DOMINANT MODE' : '主导认知模式',

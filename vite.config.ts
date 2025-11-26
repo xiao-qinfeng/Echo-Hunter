@@ -10,8 +10,8 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg', 'pwa-icon-192.png', 'pwa-icon-512.png'],
       manifest: {
-        name: 'Cognitive Genome',
-        short_name: 'Cognitive',
+        name: 'Echo Hunter',
+        short_name: 'Echo',
         description: 'AI-Powered Thought Analyzer - Map your cognitive landscape',
         theme_color: '#0f172a',
         background_color: '#0f172a',

@@ -15,14 +15,18 @@ const PWAPrompt: React.FC<PWAPromptProps> = ({ lang, onDismiss }) => {
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [showPrompt, setShowPrompt] = useState(false);
   const [isInstalled, setIsInstalled] = useState(false);
+  const [showManualInstructions, setShowManualInstructions] = useState(false);
 
   const t = {
     install: lang === 'en' ? 'Install App' : '安装应用',
     description: lang === 'en'
-      ? 'Add Cognitive Genome to your home screen for the best experience'
-      : '将认知基因组添加到主屏幕以获得最佳体验',
+      ? 'Add Echo Hunter to your home screen for the best experience'
+      : '将 Echo Hunter 添加到主屏幕以获得最佳体验',
     installButton: lang === 'en' ? 'Install' : '安装',
     maybeLater: lang === 'en' ? 'Maybe Later' : '稍后再说',
+    unsupported: lang === 'en'
+      ? 'Your browser does not support automatic installation. Please use your browser\'s "Add to Home Screen" feature.'
+      : '您的浏览器不支持自动安装。请使用浏览器的"添加到主屏幕"功能。',
     iosInstruction: lang === 'en'
       ? 'Tap the share button below and select "Add to Home Screen"'
       : '点击下方分享按钮并选择"添加到主屏幕"',
@@ -66,6 +70,7 @@ const PWAPrompt: React.FC<PWAPromptProps> = ({ lang, onDismiss }) => {
   const handleInstall = async () => {
     if (!deferredPrompt) {
       // Show manual instructions if beforeinstallprompt is not supported
+      setShowManualInstructions(true);
       return;
     }
 
@@ -80,6 +85,7 @@ const PWAPrompt: React.FC<PWAPromptProps> = ({ lang, onDismiss }) => {
       }
     } catch (error) {
       console.error('Error prompting install:', error);
+      setShowManualInstructions(true);
     } finally {
       setDeferredPrompt(null);
       setShowPrompt(false);
@@ -88,6 +94,7 @@ const PWAPrompt: React.FC<PWAPromptProps> = ({ lang, onDismiss }) => {
 
   const handleDismiss = () => {
     setShowPrompt(false);
+    setShowManualInstructions(false);
     localStorage.setItem('pwa_prompt_dismissed', Date.now().toString());
     onDismiss?.();
   };
@@ -109,7 +116,7 @@ const PWAPrompt: React.FC<PWAPromptProps> = ({ lang, onDismiss }) => {
             </div>
             <div>
               <h3 className="font-bold text-slate-200">{t.install}</h3>
-              <p className="text-xs text-slate-500">Cognitive Genome</p>
+              <p className="text-xs text-slate-500">Echo Hunter</p>
             </div>
           </div>
           <button
@@ -125,11 +132,11 @@ const PWAPrompt: React.FC<PWAPromptProps> = ({ lang, onDismiss }) => {
           {t.description}
         </p>
 
-        {isIOS && (
+        {(showManualInstructions || isIOS) && (
           <div className="flex items-start gap-2 p-3 bg-slate-800/50 rounded-lg mb-4">
             <HelpCircle size={16} className="text-violet-400 mt-0.5" />
             <p className="text-xs text-slate-400">
-              {t.iosInstruction}
+              {isIOS ? t.iosInstruction : t.unsupported}
             </p>
           </div>
         )}
@@ -146,7 +153,7 @@ const PWAPrompt: React.FC<PWAPromptProps> = ({ lang, onDismiss }) => {
           )}
           <button
             onClick={handleDismiss}
-            className={`px-4 py-3 text-slate-400 hover:text-slate-200 rounded-xl transition-colors font-medium ${isIOS ? 'flex-1' : ''}`}
+            className={`px-4 py-3 text-slate-400 hover:text-slate-200 rounded-xl transition-colors font-medium ${isIOS || showManualInstructions ? 'flex-1' : ''}`}
           >
             {t.maybeLater}
           </button>
