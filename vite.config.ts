@@ -17,10 +17,17 @@ export default defineConfig({
         theme_color: '#0f172a',
         background_color: '#0f172a',
         display: 'standalone',
+        display_override: ['standalone', 'fullscreen', 'minimal-ui'],
         orientation: 'portrait',
         start_url: '/',
         scope: '/',
         icons: [
+          {
+            src: '/apple-touch-icon.png',
+            sizes: '180x180',
+            type: 'image/png',
+            purpose: 'apple-touch-icon'
+          },
           {
             src: '/pwa-icon-192.png',
             sizes: '192x192',
@@ -36,7 +43,8 @@ export default defineConfig({
         ],
         categories: ['productivity', 'education'],
         lang: 'en',
-        dir: 'ltr'
+        dir: 'ltr',
+        prefer_related_applications: false
       },
       workbox: {
         // Cache App Shell
