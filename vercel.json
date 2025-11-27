@@ -5,12 +5,12 @@
   "framework": "vite",
   "rewrites": [
     {
-      "source": "^/(pwa-icon-192.png|pwa-icon-512.png|apple-touch-icon.png|masked-icon.svg|vite.svg|manifest.webmanifest)",
-      "destination": "/$1"
-    },
-    {
       "source": "/assets/(.*)",
       "destination": "/assets/$1"
+    },
+    {
+      "source": "/(pwa-icon-192.png|pwa-icon-512.png|apple-touch-icon.png|masked-icon.svg|vite.svg|manifest.webmanifest)",
+      "destination": "/$1"
     },
     {
       "source": "/(.*)",
