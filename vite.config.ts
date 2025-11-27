@@ -9,7 +9,7 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['**/*.{ico,png,svg,webmanifest}'],
+      includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg', 'pwa-icon-192.png', 'pwa-icon-512.png', 'vite.svg'],
       manifest: {
         name: 'Echo Hunter',
         short_name: 'Echo',
@@ -77,7 +77,9 @@ export default defineConfig({
       devOptions: {
         enabled: true,
         type: 'module'
-      }
+      },
+      // 添加调试配置
+      debug: true
     })
   ],
 })
