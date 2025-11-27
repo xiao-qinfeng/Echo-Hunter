@@ -9,7 +9,7 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg', 'pwa-icon-192.png', 'pwa-icon-512.png'],
+      includeAssets: ['**/*.{ico,png,svg,webmanifest}'],
       manifest: {
         name: 'Echo Hunter',
         short_name: 'Echo',
@@ -20,16 +20,15 @@ export default defineConfig({
         orientation: 'portrait',
         start_url: '/',
         scope: '/',
-        display_override: ['window-controls-overlay'],
         icons: [
           {
-            src: 'pwa-icon-192.png',
+            src: '/pwa-icon-192.png',
             sizes: '192x192',
             type: 'image/png',
             purpose: 'any maskable'
           },
           {
-            src: 'pwa-icon-512.png',
+            src: '/pwa-icon-512.png',
             sizes: '512x512',
             type: 'image/png',
             purpose: 'any maskable'
